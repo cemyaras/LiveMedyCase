@@ -1,0 +1,56 @@
+﻿@model UserRegisterViewModel
+@inject IOptions<ReCaptchaConfig> config;
+@{
+	Layout = "_Layout";
+	ViewData["Title"] = "SignUp";
+	var message = TempData["Message"]?.ToString();
+}
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+	<div class="alert-message">
+		@message
+	</div>
+}
+<form asp-controller="Auth" asp-action="SignUp" asp-route-referralcode="@Model.Referrer" method="Post">
+	<div class="mb-3">
+		<label class="form-label">Username</label>
+		<input asp-for="@Model.Username" value="@Model.Username" class="form-control form-control-lg" type="text" placeholder="Username" />
+		<span asp-validation-for="Username" class="text-danger"></span>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Password</label>
+		<input asp-for="@Model.Password" class="form-control form-control-lg" type="password" placeholder="Password" />
+		<span asp-validation-for="Password" class="text-danger"></span>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">ConfirmPassword</label>
+		<input asp-for="@Model.ConfirmPassword" class="form-control form-control-lg" type="password" placeholder="Confirm Password" />
+		<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+	</div>
+	@if (!string.IsNullOrWhiteSpace(Model.Referrer))
+	{
+	//workaround to create readonly input for looks like disabled
+		<div class="mb-3">
+			<label class="form-label">Referrer</label>
+			<input class="form-control form-control-lg" type="text" disabled value="@Model.Referrer" />
+		</div>
+	}
+	<input asp-for="@Model.Token" type="hidden" id="token" />
+	<input asp-for="@Model.Referrer" type="hidden" />
+	<div class="text-center mt-3">
+		<button type="submit" class="btn btn-lg btn-primary">Sign Up</button>
+	</div>
+</form>
+
+@section Scripts {
+	<script src="https://www.google.com/recaptcha/api.js?render=@config.Value.RecaptchaV3SiteKey"></script>
+	<script>
+		grecaptcha.ready(function () {
+			grecaptcha.execute("@config.Value.RecaptchaV3SiteKey", { action: "submit" })
+				.then(function (token) {
+					document.getElementById("token").value = token;
+				});
+		});
+	</script>
+}

@@ -1,0 +1,8 @@
+﻿
+@{
+	Layout = "_Layout";
+	ViewData["Title"] = "Dashboard";
+	var message = TempData["Message"]?.ToString();
+}
+
+@await Component.InvokeAsync("UserInfo")

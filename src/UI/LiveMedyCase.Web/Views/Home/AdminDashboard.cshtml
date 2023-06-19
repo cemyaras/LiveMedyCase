@@ -1,0 +1,18 @@
+﻿@model List<UserSummaryInfoResponse>
+@{
+	Layout = "_Layout";
+	ViewData["Title"] = "Dashboard";
+	var message = TempData["Message"]?.ToString();
+}
+<hr />
+<h1>Summaries</h1>
+@if(Model!= null && Model.Any())
+{
+	foreach(var summary in Model)
+	{
+		<li>Role : @summary.Role - Count : @summary.Count</li>
+	}
+	<br />
+}
+<br />
+@await Component.InvokeAsync("UserInfo")
